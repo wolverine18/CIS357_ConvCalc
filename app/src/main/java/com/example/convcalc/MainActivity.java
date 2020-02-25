@@ -12,10 +12,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import org.w3c.dom.Text;
-
 public class MainActivity extends AppCompatActivity {
 
     private boolean isLength = true;
@@ -23,6 +19,10 @@ public class MainActivity extends AppCompatActivity {
     private UnitsConverter.LengthUnits fromLength = UnitsConverter.LengthUnits.Yards;
     private UnitsConverter.VolumeUnits toVolume = UnitsConverter.VolumeUnits.Gallons;
     private UnitsConverter.VolumeUnits fromVolume = UnitsConverter.VolumeUnits.Liters;
+    private TextView lblFromUnit;
+    private TextView lblToUnit;
+    private EditText etFrom;
+    private EditText etTo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +32,11 @@ public class MainActivity extends AppCompatActivity {
         Button btnCalc = findViewById(R.id.btnCalc);
         Button btnClear = findViewById(R.id.btnClear);
         Button btnMode = findViewById(R.id.btnMode);
-        EditText etFrom = findViewById(R.id.etFrom);
-        EditText etTo = findViewById(R.id.etTo);
         TextView lblConvert = findViewById(R.id.lblConverter);
-        TextView lblFromUnit = findViewById(R.id.tvFrom);
-        TextView lblToUnit = findViewById(R.id.tvTo);
+        etFrom = findViewById(R.id.etFrom);
+        etTo = findViewById(R.id.etTo);
+        lblFromUnit = findViewById(R.id.tvFrom);
+        lblToUnit = findViewById(R.id.tvTo);
 
         btnCalc.setOnClickListener(v -> {
             hideKeybaord(v);
@@ -47,11 +47,11 @@ public class MainActivity extends AppCompatActivity {
 
             if(!fromString.equals("")){
                 fromVal = Double.parseDouble(fromString);
-                toVal = UnitsConverter.convert(fromVal, fromLength, toLength);
+                toVal = convert(fromVal);
             }
             else if(!toString.equals((""))){
                 toVal = Double.parseDouble(toString);
-                fromVal = UnitsConverter.convert(toVal, fromVolume, toVolume);
+                fromVal = convert(toVal);
             }
 
             if(fromVal != 0 && toVal != 0){
@@ -62,8 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnClear.setOnClickListener(v -> {
             hideKeybaord(v);
-            etFrom.setText("");
-            etTo.setText("");
+            clearTextFields();
         });
 
         btnMode.setOnClickListener(v -> {
@@ -80,7 +79,13 @@ public class MainActivity extends AppCompatActivity {
             }
 
             lblConvert.setText(convertText);
+            clearTextFields();
         });
+    }
+
+    private void clearTextFields() {
+        etFrom.setText("");
+        etTo.setText("");
     }
 
     private void hideKeybaord(View v) {
@@ -97,12 +102,58 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.menuSettings){
+            String toUnit;
+            String fromUnit;
+
+            if(isLength) {
+                toUnit = toLength.name();
+                fromUnit = fromLength.name();
+            }
+            else {
+                toUnit = toVolume.name();
+                fromUnit = fromVolume.name();
+            }
 
             Intent intent = new Intent(MainActivity.this, Settings.class);
             intent.putExtra("isLength", isLength);
-            startActivity(intent);
+            intent.putExtra("toUnit", toUnit);
+            intent.putExtra("fromUnit", fromUnit);
+            startActivityForResult(intent, 1);
             return true;
         }
         return false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1) {
+            if(resultCode == RESULT_OK) {
+                String toUnit = data.getStringExtra("toUnit");
+                String fromUnit = data.getStringExtra("fromUnit");
+
+                if(isLength){
+                    fromLength = UnitsConverter.LengthUnits.valueOf(fromUnit);
+                    toLength = UnitsConverter.LengthUnits.valueOf(toUnit);
+                } else {
+                    fromVolume = UnitsConverter.VolumeUnits.valueOf(fromUnit);
+                    toVolume = UnitsConverter.VolumeUnits.valueOf(toUnit);
+                }
+                lblFromUnit.setText(fromUnit);
+                lblToUnit.setText(toUnit);
+            }
+        }
+        clearTextFields();
+    }
+
+    private double convert(double fromVal) {
+        double toVal;
+        if(isLength) {
+            toVal = UnitsConverter.convert(fromVal, fromLength, toLength);
+        }
+        else {
+            toVal = UnitsConverter.convert(fromVal, fromVolume, toVolume);
+        }
+        return toVal;
     }
 }
