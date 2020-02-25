@@ -2,14 +2,27 @@ package com.example.convcalc;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.w3c.dom.Text;
+
 public class MainActivity extends AppCompatActivity {
+
+    private boolean isLength = true;
+    private UnitsConverter.LengthUnits toLength = UnitsConverter.LengthUnits.Meters;
+    private UnitsConverter.LengthUnits fromLength = UnitsConverter.LengthUnits.Yards;
+    private UnitsConverter.VolumeUnits toVolume = UnitsConverter.VolumeUnits.Gallons;
+    private UnitsConverter.VolumeUnits fromVolume = UnitsConverter.VolumeUnits.Liters;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
         EditText etFrom = findViewById(R.id.etFrom);
         EditText etTo = findViewById(R.id.etTo);
         TextView lblConvert = findViewById(R.id.lblConverter);
+        TextView lblFromUnit = findViewById(R.id.tvFrom);
+        TextView lblToUnit = findViewById(R.id.tvTo);
 
         btnCalc.setOnClickListener(v -> {
             hideKeybaord(v);
@@ -32,11 +47,11 @@ public class MainActivity extends AppCompatActivity {
 
             if(!fromString.equals("")){
                 fromVal = Double.parseDouble(fromString);
-                toVal = UnitsConverter.convert(fromVal, UnitsConverter.LengthUnits.Yards, UnitsConverter.LengthUnits.Meters);
+                toVal = UnitsConverter.convert(fromVal, fromLength, toLength);
             }
             else if(!toString.equals((""))){
                 toVal = Double.parseDouble(toString);
-                fromVal = UnitsConverter.convert(toVal, UnitsConverter.LengthUnits.Meters, UnitsConverter.LengthUnits.Yards);
+                fromVal = UnitsConverter.convert(toVal, fromVolume, toVolume);
             }
 
             if(fromVal != 0 && toVal != 0){
@@ -54,8 +69,16 @@ public class MainActivity extends AppCompatActivity {
         btnMode.setOnClickListener(v -> {
             hideKeybaord(v);
 
-            String convertText = lblConvert.getText().toString();
-            convertText = convertText == "Length Converter"? "Volume Converter": "Length Converter";
+            String convertText = isLength? "Volume Converter": "Length Converter";
+            isLength = !isLength;
+            if(isLength){
+                lblFromUnit.setText(fromLength.name());
+                lblToUnit.setText(toLength.name());
+            } else {
+                lblFromUnit.setText(fromVolume.name());
+                lblToUnit.setText(toVolume.name());
+            }
+
             lblConvert.setText(convertText);
         });
     }
@@ -63,5 +86,23 @@ public class MainActivity extends AppCompatActivity {
     private void hideKeybaord(View v) {
         InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(v.getApplicationWindowToken(),0);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.menuSettings){
+
+            Intent intent = new Intent(MainActivity.this, Settings.class);
+            intent.putExtra("isLength", isLength);
+            startActivity(intent);
+            return true;
+        }
+        return false;
     }
 }
