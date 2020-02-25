@@ -81,6 +81,24 @@ public class MainActivity extends AppCompatActivity {
             lblConvert.setText(convertText);
             clearTextFields();
         });
+
+        etFrom.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    etTo.setText("");
+                }
+            }
+        });
+
+        etTo.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    etFrom.setText("");
+                }
+            }
+        });
     }
 
     private void clearTextFields() {
