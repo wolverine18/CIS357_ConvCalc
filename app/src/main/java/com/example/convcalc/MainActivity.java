@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
         Button btnMode = findViewById(R.id.btnMode);
         EditText etFrom = findViewById(R.id.etFrom);
         EditText etTo = findViewById(R.id.etTo);
+        TextView lblConvert = findViewById(R.id.lblConverter);
 
         btnCalc.setOnClickListener(v -> {
             hideKeybaord(v);
@@ -52,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
         btnMode.setOnClickListener(v -> {
             hideKeybaord(v);
 
+            String convertText = lblConvert.getText().toString();
+            convertText = convertText == "Length Converter"? "Volume Converter": "Length Converter";
+            lblConvert.setText(convertText);
         });
     }
 
