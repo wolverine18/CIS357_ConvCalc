@@ -47,11 +47,11 @@ public class MainActivity extends AppCompatActivity {
 
             if(!fromString.equals("")){
                 fromVal = Double.parseDouble(fromString);
-                toVal = convert(fromVal);
+                toVal = convert(fromVal, true);
             }
             else if(!toString.equals((""))){
                 toVal = Double.parseDouble(toString);
-                fromVal = convert(toVal);
+                fromVal = convert(toVal, false);
             }
 
             if(fromVal != 0 && toVal != 0){
@@ -164,13 +164,23 @@ public class MainActivity extends AppCompatActivity {
         clearTextFields();
     }
 
-    private double convert(double fromVal) {
+    private double convert(double fromVal, boolean from) {
         double toVal;
         if(isLength) {
-            toVal = UnitsConverter.convert(fromVal, fromLength, toLength);
+            if (from){
+                toVal = UnitsConverter.convert(fromVal, fromLength, toLength);
+            }
+            else {
+                toVal = UnitsConverter.convert(fromVal, toLength, fromLength);
+            }
         }
         else {
-            toVal = UnitsConverter.convert(fromVal, fromVolume, toVolume);
+            if (from){
+                toVal = UnitsConverter.convert(fromVal, fromVolume, toVolume);
+            }
+            else {
+                toVal = UnitsConverter.convert(fromVal, toVolume, fromVolume);
+            }
         }
         return toVal;
     }
