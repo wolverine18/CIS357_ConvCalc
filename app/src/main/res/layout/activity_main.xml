@@ -48,10 +48,10 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:text="Meters"
+        app:layout_constraintBaseline_toBaselineOf="@+id/etTo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/etTo"
-        tools:layout_editor_absoluteY="173dp" />
+        app:layout_constraintStart_toEndOf="@+id/etTo" />
 
     <TextView
         android:id="@+id/lblConverter"
@@ -95,10 +95,10 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:text="Yards"
+        app:layout_constraintBaseline_toBaselineOf="@+id/etFrom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/etFrom"
-        tools:layout_editor_absoluteY="82dp" />
+        app:layout_constraintStart_toEndOf="@+id/etFrom" />
 
     <Button
         android:id="@+id/btnClear"
